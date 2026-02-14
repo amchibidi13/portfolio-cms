@@ -56,6 +56,14 @@ app.use('/', publicRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+app.get('*', (req, res) => {
+  res.status(404).render('error', {
+    statusCode: 404,
+    message: 'Page Not Found',
+    description: 'The page you are looking for does not exist.'
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`
