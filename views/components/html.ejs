@@ -1,0 +1,8 @@
+<%
+const htmlContent = component.config.html || component.config.content || '';
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<div class="component component-html" style="<%= styleStr %>">
+    <%- htmlContent %>
+</div>

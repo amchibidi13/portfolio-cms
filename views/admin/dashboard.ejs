@@ -1,0 +1,74 @@
+<div class="admin-header">
+    <h1>Dashboard</h1>
+    <p>Welcome to your Portfolio CMS admin panel</p>
+</div>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-content">
+            <h3><%= stats.pages %></h3>
+            <p>Pages</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+            <h3><%= stats.sections %></h3>
+            <p>Sections</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">🧩</div>
+        <div class="stat-content">
+            <h3><%= stats.components %></h3>
+            <p>Components</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">💼</div>
+        <div class="stat-content">
+            <h3><%= stats.projects %></h3>
+            <p>Projects</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-content">
+            <h3><%= stats.articles %></h3>
+            <p>Articles</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+        <a href="/admin/pages" class="btn btn-primary">Manage Pages</a>
+        <a href="/admin/components" class="btn btn-secondary">Add Components</a>
+        <a href="/admin/config" class="btn btn-secondary">Edit Configuration</a>
+        <a href="/" target="_blank" class="btn btn-outline">View Site</a>
+    </div>
+</div>
+
+<div class="dashboard-info">
+    <h2>Getting Started</h2>
+    <div class="info-box">
+        <h3>📝 Content Management</h3>
+        <p>All your site content is stored in the database. You can edit text, styles, and layout without touching code.</p>
+    </div>
+    
+    <div class="info-box">
+        <h3>🎨 Customize Design</h3>
+        <p>Go to Configuration to change colors, fonts, and other design settings. Changes apply site-wide.</p>
+    </div>
+    
+    <div class="info-box">
+        <h3>🧩 Add Components</h3>
+        <p>Build pages by adding components like text, images, forms, and more. Arrange them in any order.</p>
+    </div>
+</div>

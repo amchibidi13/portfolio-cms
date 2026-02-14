@@ -1,0 +1,9 @@
+<%
+const src = component.config.src || '/images/placeholder.jpg';
+const alt = component.config.alt || '';
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<div class="component component-image">
+    <img src="<%= src %>" alt="<%= alt %>" style="<%= styleStr %>">
+</div>

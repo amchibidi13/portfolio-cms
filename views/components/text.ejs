@@ -1,0 +1,8 @@
+<%
+const text = component.config.text_key ? textContent[component.config.text_key] : (component.config.text || '');
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<div class="component component-text" style="<%= styleStr %>">
+    <%= text %>
+</div>

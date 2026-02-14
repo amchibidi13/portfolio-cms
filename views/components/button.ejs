@@ -1,0 +1,12 @@
+<%
+const text = component.config.text_key ? textContent[component.config.text_key] : (component.config.text || 'Button');
+const url = component.config.url || '#';
+const variant = component.config.variant || 'primary';
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<div class="component component-button">
+    <a href="<%= url %>" class="btn btn-<%= variant %>" style="<%= styleStr %>">
+        <%= text %>
+    </a>
+</div>

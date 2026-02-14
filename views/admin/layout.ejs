@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Portfolio CMS</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Portfolio CMS</h2>
+                <p class="admin-username">👤 <%= username %></p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-link">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a href="/admin/pages" class="nav-link">
+                    <span class="nav-icon">📄</span> Pages
+                </a>
+                <a href="/admin/sections" class="nav-link">
+                    <span class="nav-icon">📦</span> Sections
+                </a>
+                <a href="/admin/components" class="nav-link">
+                    <span class="nav-icon">🧩</span> Components
+                </a>
+                <a href="/admin/config" class="nav-link">
+                    <span class="nav-icon">⚙️</span> Configuration
+                </a>
+                <hr>
+                <a href="/" class="nav-link" target="_blank">
+                    <span class="nav-icon">🌐</span> View Site
+                </a>
+                <a href="/admin/logout" class="nav-link">
+                    <span class="nav-icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-content">
+                <%- body %>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

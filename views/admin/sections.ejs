@@ -1,0 +1,145 @@
+<div class="admin-header">
+    <h1>Sections Management</h1>
+    <button class="btn btn-primary" onclick="showCreateSectionModal()">+ Create New Section</button>
+</div>
+
+<div class="admin-table-container">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Page</th>
+                <th>Section Key</th>
+                <th>Order</th>
+                <th>Visible</th>
+                <th>Background</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% sections.forEach(function(section) { %>
+                <tr>
+                    <td><%= section.page_title %></td>
+                    <td><%= section.section_key %></td>
+                    <td><%= section.display_order %></td>
+                    <td>
+                        <span class="badge <%= section.is_visible ? 'badge-success' : 'badge-danger' %>">
+                            <%= section.is_visible ? 'Yes' : 'No' %>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="color-preview" style="background: <%= section.background_color || '#ffffff' %>"></div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSection(<%= section.id %>, '<%= section.section_key %>')">Delete</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Section Modal -->
+<div id="createSectionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create New Section</h2>
+            <button class="modal-close" onclick="closeCreateSectionModal()">&times;</button>
+        </div>
+        <form id="createSectionForm" onsubmit="createSection(event)">
+            <div class="form-group">
+                <label for="section_page">Page *</label>
+                <select id="section_page" name="page_id" required>
+                    <% pages.forEach(function(page) { %>
+                        <option value="<%= page.id %>"><%= page.title %></option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="section_key">Section Key *</label>
+                <input type="text" id="section_key" name="section_key" required>
+                <small>Unique identifier (e.g., "hero", "features")</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="section_order">Display Order</label>
+                <input type="number" id="section_order" name="display_order" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="section_bg">Background Color</label>
+                <input type="text" id="section_bg" name="background_color" placeholder="#ffffff or gradient">
+            </div>
+            
+            <div class="form-group">
+                <label for="section_padding">Padding</label>
+                <input type="text" id="section_padding" name="padding" placeholder="4rem 2rem">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCreateSectionModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Section</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showCreateSectionModal() {
+    document.getElementById('createSectionModal').style.display = 'flex';
+}
+
+function closeCreateSectionModal() {
+    document.getElementById('createSectionModal').style.display = 'none';
+    document.getElementById('createSectionForm').reset();
+}
+
+async function createSection(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch('/admin/api/sections', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Section created successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error creating section');
+    }
+}
+
+async function deleteSection(id, key) {
+    if (!confirm(`Are you sure you want to delete section "${key}"? This will also delete all components in this section.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/api/sections/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Section deleted successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error deleting section');
+    }
+}
+</script>

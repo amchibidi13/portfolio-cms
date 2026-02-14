@@ -1,0 +1,17 @@
+<%
+const level = component.config.level || 'h2';
+const text = component.config.text_key ? textContent[component.config.text_key] : (component.config.text || '');
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<% if (level === 'h1') { %>
+    <h1 class="component component-heading" style="<%= styleStr %>"><%= text %></h1>
+<% } else if (level === 'h2') { %>
+    <h2 class="component component-heading" style="<%= styleStr %>"><%= text %></h2>
+<% } else if (level === 'h3') { %>
+    <h3 class="component component-heading" style="<%= styleStr %>"><%= text %></h3>
+<% } else if (level === 'h4') { %>
+    <h4 class="component component-heading" style="<%= styleStr %>"><%= text %></h4>
+<% } else { %>
+    <h2 class="component component-heading" style="<%= styleStr %>"><%= text %></h2>
+<% } %>

@@ -1,0 +1,228 @@
+<div class="admin-header">
+    <h1>Components Management</h1>
+    <button class="btn btn-primary" onclick="showCreateComponentModal()">+ Create New Component</button>
+</div>
+
+<div class="components-list">
+    <% components.forEach(function(component) { %>
+        <div class="component-card">
+            <div class="component-card-header">
+                <h3><%= component.component_type %></h3>
+                <span class="badge"><%= component.page_title %> / <%= component.section_key %></span>
+            </div>
+            
+            <div class="component-card-body">
+                <p><strong>Order:</strong> <%= component.display_order %></p>
+                <p><strong>Visible:</strong> <%= component.is_visible ? 'Yes' : 'No' %></p>
+                
+                <details class="component-details">
+                    <summary>View Configuration</summary>
+                    <pre class="code-block"><%= JSON.stringify(component.config, null, 2) %></pre>
+                </details>
+                
+                <details class="component-details">
+                    <summary>View Styles</summary>
+                    <pre class="code-block"><%= JSON.stringify(component.styles, null, 2) %></pre>
+                </details>
+            </div>
+            
+            <div class="component-card-actions">
+                <button class="btn btn-sm btn-secondary" onclick="editComponent(<%= component.id %>, <%= JSON.stringify(component.config).replace(/"/g, '&quot;') %>, <%= JSON.stringify(component.styles).replace(/"/g, '&quot;') %>)">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteComponent(<%= component.id %>, '<%= component.component_type %>')">Delete</button>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<!-- Create Component Modal -->
+<div id="createComponentModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2>Create New Component</h2>
+            <button class="modal-close" onclick="closeCreateComponentModal()">&times;</button>
+        </div>
+        <form id="createComponentForm" onsubmit="createComponent(event)">
+            <div class="form-group">
+                <label for="component_section">Section *</label>
+                <select id="component_section" name="section_id" required>
+                    <% sections.forEach(function(section) { %>
+                        <option value="<%= section.id %>"><%= section.page_title %> - <%= section.section_key %></option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="component_type">Component Type *</label>
+                <select id="component_type" name="component_type" required>
+                    <% componentTypes.forEach(function(type) { %>
+                        <option value="<%= type.type_name %>"><%= type.type_name %></option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="component_order">Display Order</label>
+                <input type="number" id="component_order" name="display_order" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="component_config">Configuration (JSON)</label>
+                <textarea id="component_config" name="config" rows="8">{}</textarea>
+                <small>Component-specific settings in JSON format</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="component_styles">Styles (JSON)</label>
+                <textarea id="component_styles" name="styles" rows="8">{}</textarea>
+                <small>CSS styles in JSON format (e.g., {"fontSize": "1.5rem"})</small>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCreateComponentModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Component</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Component Modal -->
+<div id="editComponentModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2>Edit Component</h2>
+            <button class="modal-close" onclick="closeEditComponentModal()">&times;</button>
+        </div>
+        <form id="editComponentForm" onsubmit="updateComponent(event)">
+            <input type="hidden" id="edit_component_id">
+            
+            <div class="form-group">
+                <label for="edit_component_config">Configuration (JSON)</label>
+                <textarea id="edit_component_config" name="config" rows="8"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_component_styles">Styles (JSON)</label>
+                <textarea id="edit_component_styles" name="styles" rows="8"></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditComponentModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Component</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showCreateComponentModal() {
+    document.getElementById('createComponentModal').style.display = 'flex';
+}
+
+function closeCreateComponentModal() {
+    document.getElementById('createComponentModal').style.display = 'none';
+    document.getElementById('createComponentForm').reset();
+}
+
+function editComponent(id, config, styles) {
+    document.getElementById('edit_component_id').value = id;
+    document.getElementById('edit_component_config').value = JSON.stringify(config, null, 2);
+    document.getElementById('edit_component_styles').value = JSON.stringify(styles, null, 2);
+    document.getElementById('editComponentModal').style.display = 'flex';
+}
+
+function closeEditComponentModal() {
+    document.getElementById('editComponentModal').style.display = 'none';
+}
+
+async function createComponent(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        data.config = JSON.parse(data.config);
+        data.styles = JSON.parse(data.styles);
+    } catch (e) {
+        alert('Invalid JSON format');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/admin/api/components', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Component created successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error creating component');
+    }
+}
+
+async function updateComponent(event) {
+    event.preventDefault();
+    const id = document.getElementById('edit_component_id').value;
+    const config = document.getElementById('edit_component_config').value;
+    const styles = document.getElementById('edit_component_styles').value;
+    
+    let data = {};
+    try {
+        data.config = JSON.parse(config);
+        data.styles = JSON.parse(styles);
+    } catch (e) {
+        alert('Invalid JSON format');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/api/components/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Component updated successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error updating component');
+    }
+}
+
+async function deleteComponent(id, type) {
+    if (!confirm(`Are you sure you want to delete this ${type} component?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/api/components/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Component deleted successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error deleting component');
+    }
+}
+</script>

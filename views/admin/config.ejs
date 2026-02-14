@@ -1,0 +1,191 @@
+<div class="admin-header">
+    <h1>Site Configuration</h1>
+    <p>Manage site-wide settings and text content</p>
+</div>
+
+<div class="config-sections">
+    <!-- Site Configuration -->
+    <section class="config-section">
+        <h2>Site Configuration</h2>
+        <div class="config-grid">
+            <% config.forEach(function(item) { %>
+                <div class="config-item">
+                    <label><%= item.config_key %></label>
+                    <input 
+                        type="text" 
+                        value="<%= item.config_value %>" 
+                        data-key="<%= item.config_key %>"
+                        onchange="updateConfig(this)"
+                        class="config-input"
+                    >
+                    <% if (item.description) { %>
+                        <small><%= item.description %></small>
+                    <% } %>
+                </div>
+            <% }); %>
+        </div>
+        
+        <div class="add-config">
+            <h3>Add New Configuration</h3>
+            <form onsubmit="addConfig(event)" class="inline-form">
+                <input type="text" name="key" placeholder="config_key" required>
+                <input type="text" name="value" placeholder="value" required>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Text Content -->
+    <section class="config-section">
+        <h2>Text Content</h2>
+        <p>All text displayed on your site</p>
+        
+        <div class="text-content-list">
+            <% textContent.forEach(function(item) { %>
+                <div class="text-content-item">
+                    <div class="text-content-header">
+                        <strong><%= item.content_key %></strong>
+                        <% if (item.description) { %>
+                            <small><%= item.description %></small>
+                        <% } %>
+                    </div>
+                    <textarea 
+                        data-key="<%= item.content_key %>"
+                        onchange="updateTextContent(this)"
+                        class="text-content-input"
+                        rows="3"
+                    ><%= item.content_value %></textarea>
+                </div>
+            <% }); %>
+        </div>
+        
+        <div class="add-text-content">
+            <h3>Add New Text Content</h3>
+            <form onsubmit="addTextContent(event)" class="inline-form">
+                <input type="text" name="key" placeholder="content_key" required>
+                <textarea name="value" placeholder="content value" required rows="3"></textarea>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </section>
+</div>
+
+<script>
+async function updateConfig(input) {
+    const key = input.dataset.key;
+    const value = input.value;
+    
+    try {
+        const response = await fetch('/admin/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ config_key: key, config_value: value })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Configuration updated successfully', 'success');
+        } else {
+            showNotification('Error: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showNotification('Error updating configuration', 'error');
+    }
+}
+
+async function addConfig(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/admin/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                config_key: formData.get('key'), 
+                config_value: formData.get('value') 
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Configuration added successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification('Error: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showNotification('Error adding configuration', 'error');
+    }
+}
+
+async function updateTextContent(textarea) {
+    const key = textarea.dataset.key;
+    const value = textarea.value;
+    
+    try {
+        const response = await fetch('/admin/api/text-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content_key: key, content_value: value })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Text content updated successfully', 'success');
+        } else {
+            showNotification('Error: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showNotification('Error updating text content', 'error');
+    }
+}
+
+async function addTextContent(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/admin/api/text-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                content_key: formData.get('key'), 
+                content_value: formData.get('value') 
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Text content added successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification('Error: ' + result.message, 'error');
+        }
+    } catch (error) {
+        showNotification('Error adding text content', 'error');
+    }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+</script>

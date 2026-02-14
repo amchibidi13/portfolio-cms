@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof page !== 'undefined' ? page.title + ' - ' : '' %><%= siteConfig.site_title || 'Portfolio' %></title>
+    <meta name="description" content="<%= typeof page !== 'undefined' && page.meta_description ? page.meta_description : siteConfig.site_description || '' %>">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        :root {
+            --primary-color: <%= siteConfig.primary_color || '#2563eb' %>;
+            --secondary-color: <%= siteConfig.secondary_color || '#1e40af' %>;
+            --accent-color: <%= siteConfig.accent_color || '#f59e0b' %>;
+            --text-color: <%= siteConfig.text_color || '#1f2937' %>;
+            --background-color: <%= siteConfig.background_color || '#ffffff' %>;
+            --font-primary: <%= siteConfig.font_primary || 'Inter, system-ui, sans-serif' %>;
+            --font-heading: <%= siteConfig.font_heading || 'Space Grotesk, sans-serif' %>;
+            --max-width: <%= siteConfig.max_width || '1200px' %>;
+        }
+    </style>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/"><%= siteConfig.site_title || 'Portfolio' %></a>
+            </div>
+            <ul class="nav-menu">
+                <% navigation.forEach(function(item) { %>
+                    <li class="nav-item">
+                        <a href="<%= item.url %>" class="nav-link <%= currentPath === item.url ? 'active' : '' %>">
+                            <%= item.title %>
+                        </a>
+                    </li>
+                <% }); %>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>&copy; <%= new Date().getFullYear() %> <%= siteConfig.site_title || 'Portfolio' %>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

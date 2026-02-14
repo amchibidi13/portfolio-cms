@@ -1,0 +1,15 @@
+<div class="component component-hero" style="<%= Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ') %>">
+    <div class="hero-content">
+        <% if (component.config.title_key) { %>
+            <h1 class="hero-title"><%= textContent[component.config.title_key] || '' %></h1>
+        <% } %>
+        <% if (component.config.subtitle_key) { %>
+            <p class="hero-subtitle"><%= textContent[component.config.subtitle_key] || '' %></p>
+        <% } %>
+        <% if (component.config.cta_key && component.config.cta_link) { %>
+            <a href="<%= component.config.cta_link %>" class="hero-cta btn btn-primary">
+                <%= textContent[component.config.cta_key] || 'Learn More' %>
+            </a>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<%
+const limit = component.config.limit || 10;
+const showExcerpt = component.config.showExcerpt !== false;
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+const displayArticles = typeof articles !== 'undefined' ? articles.slice(0, limit) : [];
+%>
+
+<div class="component component-articles-list" style="<%= styleStr %>">
+    <div class="articles-list">
+        <% if (displayArticles.length > 0) { %>
+            <% displayArticles.forEach(function(article) { %>
+                <article class="article-item">
+                    <div class="article-content">
+                        <h3 class="article-title">
+                            <a href="/article/<%= article.slug %>"><%= article.title %></a>
+                        </h3>
+                        <% if (article.published_at) { %>
+                            <div class="article-meta">
+                                <span class="article-date"><%= new Date(article.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                <% if (article.author) { %>
+                                    <span class="article-author">by <%= article.author %></span>
+                                <% } %>
+                            </div>
+                        <% } %>
+                        <% if (showExcerpt && article.excerpt) { %>
+                            <p class="article-excerpt"><%= article.excerpt %></p>
+                        <% } %>
+                        <a href="/article/<%= article.slug %>" class="article-read-more">Read More →</a>
+                    </div>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <p>No articles available yet.</p>
+        <% } %>
+    </div>
+</div>

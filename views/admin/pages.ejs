@@ -1,0 +1,147 @@
+<div class="admin-header">
+    <h1>Pages Management</h1>
+    <button class="btn btn-primary" onclick="showCreatePageModal()">+ Create New Page</button>
+</div>
+
+<div class="admin-table-container">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Published</th>
+                <th>Show in Nav</th>
+                <th>Nav Order</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pages.forEach(function(page) { %>
+                <tr>
+                    <td><%= page.title %></td>
+                    <td>/<%= page.slug %></td>
+                    <td>
+                        <span class="badge <%= page.is_published ? 'badge-success' : 'badge-danger' %>">
+                            <%= page.is_published ? 'Yes' : 'No' %>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge <%= page.show_in_nav ? 'badge-success' : 'badge-secondary' %>">
+                            <%= page.show_in_nav ? 'Yes' : 'No' %>
+                        </span>
+                    </td>
+                    <td><%= page.nav_order %></td>
+                    <td>
+                        <a href="/<%= page.slug %>" target="_blank" class="btn btn-sm btn-outline">View</a>
+                        <button class="btn btn-sm btn-danger" onclick="deletePage(<%= page.id %>, '<%= page.title %>')">Delete</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create New Page</h2>
+            <button class="modal-close" onclick="closeCreatePageModal()">&times;</button>
+        </div>
+        <form id="createPageForm" onsubmit="createPage(event)">
+            <div class="form-group">
+                <label for="page_title">Title *</label>
+                <input type="text" id="page_title" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="page_slug">Slug *</label>
+                <input type="text" id="page_slug" name="slug" required>
+                <small>URL-friendly version (e.g., "about-me")</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="page_meta">Meta Description</label>
+                <textarea id="page_meta" name="meta_description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="show_in_nav" checked>
+                    Show in Navigation
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label for="page_nav_order">Navigation Order</label>
+                <input type="number" id="page_nav_order" name="nav_order" value="0">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeCreatePageModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Page</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showCreatePageModal() {
+    document.getElementById('createPageModal').style.display = 'flex';
+}
+
+function closeCreatePageModal() {
+    document.getElementById('createPageModal').style.display = 'none';
+    document.getElementById('createPageForm').reset();
+}
+
+async function createPage(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.show_in_nav = formData.get('show_in_nav') === 'on';
+    
+    try {
+        const response = await fetch('/admin/api/pages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Page created successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error creating page');
+    }
+}
+
+async function deletePage(id, title) {
+    if (!confirm(`Are you sure you want to delete "${title}"? This will also delete all sections and components on this page.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/api/pages/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Page deleted successfully!');
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        alert('Error deleting page');
+    }
+}
+</script>

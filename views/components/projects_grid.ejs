@@ -1,0 +1,47 @@
+<%
+const columns = component.config.columns || 3;
+const showDescription = component.config.showDescription !== false;
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+const gap = component.config.gap || component.styles.gap || '2rem';
+%>
+
+<div class="component component-projects-grid" style="<%= styleStr %>">
+    <div class="projects-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: <%= gap %>;">
+        <% if (typeof projects !== 'undefined' && projects.length > 0) { %>
+            <% projects.forEach(function(project) { %>
+                <div class="project-card">
+                    <% if (project.image_url) { %>
+                        <div class="project-image">
+                            <img src="<%= project.image_url %>" alt="<%= project.title %>">
+                        </div>
+                    <% } %>
+                    <div class="project-content">
+                        <h3 class="project-title"><%= project.title %></h3>
+                        <% if (showDescription && project.description) { %>
+                            <p class="project-description"><%= project.description %></p>
+                        <% } %>
+                        <% if (project.technologies) { %>
+                            <div class="project-technologies">
+                                <% project.technologies.split(',').forEach(function(tech) { %>
+                                    <span class="tech-tag"><%= tech.trim() %></span>
+                                <% }); %>
+                            </div>
+                        <% } %>
+                        <% if (project.project_url || project.github_url) { %>
+                            <div class="project-links">
+                                <% if (project.project_url) { %>
+                                    <a href="<%= project.project_url %>" target="_blank" rel="noopener noreferrer" class="project-link">View Project</a>
+                                <% } %>
+                                <% if (project.github_url) { %>
+                                    <a href="<%= project.github_url %>" target="_blank" rel="noopener noreferrer" class="project-link">GitHub</a>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No projects available yet.</p>
+        <% } %>
+    </div>
+</div>

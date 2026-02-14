@@ -1,0 +1,16 @@
+<%
+const columns = component.config.columns || 3;
+const gap = component.config.gap || '1rem';
+const images = component.config.images || [];
+const styleStr = Object.entries(component.styles).map(([key, value]) => key.replace(/([A-Z])/g, '-$1').toLowerCase() + ': ' + value).join('; ');
+%>
+
+<div class="component component-gallery" style="<%= styleStr %>">
+    <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: <%= gap %>;">
+        <% images.forEach(function(image) { %>
+            <div class="gallery-item">
+                <img src="<%= image.src %>" alt="<%= image.alt || '' %>" loading="lazy">
+            </div>
+        <% }); %>
+    </div>
+</div>
