@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || '6fea2a0b0cba7d84462283fcc25fba4f70fb434edf390cfe8d70b0eeb75549dc',
   resave: false,
   saveUninitialized: false,
   cookie: {
