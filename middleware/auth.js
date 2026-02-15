@@ -39,8 +39,6 @@ function attachUser(req, res, next) {
   next();
 }
 
-app.use('/admin', adminRoutes);
-
 module.exports = {
   isAuthenticated,
   isLoggedIn,
